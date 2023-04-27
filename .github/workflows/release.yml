@@ -18,7 +18,8 @@ jobs:
 
       - name: Build binary
         run: |
-          cargo xtask build-ebpf --release --target=x86_64-unknown-linux-gnu
+          cargo xtask build-ebpf --release
+          rustup target add x86_64-unknown-linux-musl
           cargo build --release --target=x86_64-unknown-linux-musl
 
       - name: Get release
