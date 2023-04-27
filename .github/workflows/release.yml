@@ -11,20 +11,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
+      # - name: Install Rust toolchain
+      #   uses: actions-rs/toolchain@v1
+      #   with:
+      #     toolchain: nightly
 
-      - name: Install dependencies
-        run: |
-          cargo install bpf-linker
-          rustup target add x86_64-unknown-linux-musl
+      # - name: Install dependencies
+      #   run: |
+      #     cargo install bpf-linker
+      #     rustup target add x86_64-unknown-linux-musl
 
-      - name: Build binary
-        run: |
-          cargo xtask build-ebpf --release
-          cargo build --release --target=x86_64-unknown-linux-musl
+      # - name: Build binary
+      #   run: |
+      #     cargo xtask build-ebpf --release
+      #     cargo build --release --target=x86_64-unknown-linux-musl
 
       - name: Get release
         id: get_release
@@ -32,23 +32,28 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Compress binary
-        uses: a7ul/tar-action@v1.1.0
-        id: compress
-        with:
-          command: c
-          cwd: ${{ env.BUILD_DIR }}
-          files: |
-            ./koops
-          outPath: koops-x86_64-linux.tar.gz
+      # - name: Compress binary
+      #   uses: a7ul/tar-action@v1.1.0
+      #   id: compress
+      #   with:
+      #     command: c
+      #     cwd: ${{ env.BUILD_DIR }}
+      #     files: |
+      #       ./koops
+      #     outPath: koops-x86_64-linux.tar.gz
 
       # to be updated to https://github.com/softprops/action-gh-release
       - name: Upload release binary
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./koops-x86_64-linux.tar.gz
-          asset_name: koops-x86_64-linux.tar.gz
-          asset_content_type: application/gzip
+        run: |
+          echo ${{ steps.get_release.outputs.upload_url }}
+          echo ${{ github.token }}
+
+      # - name: Upload release binary
+      #   uses: actions/upload-release-asset@v1.0.2
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     upload_url: ${{ steps.get_release.outputs.upload_url }}
+      #     asset_path: ./koops-x86_64-linux.tar.gz
+      #     asset_name: koops-x86_64-linux.tar.gz
+      #     asset_content_type: application/gzip
