@@ -1,36 +1,22 @@
-use aya::programs::KProbe;
-use aya::{include_bytes_aligned, Bpf};
-use aya_log::BpfLogger;
-use log::{info, warn};
+use log::info;
 use tokio::signal;
+
+mod api;
+mod ebpf;
+mod shared_map;
+
+use shared_map::SharedMap;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     env_logger::init();
+    let ebpf = ebpf::init();
+    let shared_map = SharedMap::new(&ebpf);
 
-    // This will include your eBPF object file as raw bytes at compile-time and load it at
-    // runtime. This approach is recommended for most real-world use cases. If you would
-    // like to specify the eBPF program at runtime rather than at compile-time, you can
-    // reach for `Bpf::load_file` instead.
-    #[cfg(debug_assertions)]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/debug/koops"
-    ))?;
-    #[cfg(not(debug_assertions))]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/release/koops"
-    ))?;
-    if let Err(e) = BpfLogger::init(&mut bpf) {
-        // This can happen if you remove all log statements from your eBPF program.
-        warn!("failed to initialize eBPF logger: {}", e);
-    }
-    let program: &mut KProbe = bpf.program_mut("koops").unwrap().try_into()?;
-    program.load()?;
-    program.attach("oops_exit", 0)?;
+    tokio::spawn(async move { api::server::serve(shared_map.clone(), 3031).await });
 
     info!("Waiting for Ctrl-C...");
     signal::ctrl_c().await?;
     info!("Exiting...");
-
     Ok(())
 }
