@@ -1,5 +1,5 @@
 ## koops
-An eBPF kprobe that attaches to oops_exit function and counts the number of kernel oopses happend after the attachment.
+An ebpf program that attaches a kprobe to oops_exit function and exports the number of kernel oopses happend after the attachment in prometheus format.
 
 To simulate an oops, build and install the kernel module located in `oops_mod` directory.
 ### Run
