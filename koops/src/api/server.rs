@@ -10,6 +10,10 @@ pub async fn serve(map: Arc<Mutex<SharedMap>>, server_port: u16) {
         .and(warp::any().map(move || map.clone()))
         .and_then(prometheus_metrics);
 
+    println!(
+        "Metrics are available on: http://0.0.0.0:{}/metrics",
+        server_port
+    );
     warp::serve(metrics_route)
         .run(([0, 0, 0, 0], server_port))
         .await;
