@@ -11,11 +11,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - uses: actions-rs/toolchain@v1
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
 
-      - uses: actions-rs/cargo@v1
+      - name: Build binary
         run: |
           cargo xtask build-ebpf --release --target=x86_64-unknown-linux-gnu
           cargo build --release --target=x86_64-unknown-linux-musl
@@ -26,7 +27,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Compress action step
+      - name: Compress binary
         uses: a7ul/tar-action@v1.1.0
         id: compress
         with:
