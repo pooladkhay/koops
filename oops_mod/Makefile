@@ -1,4 +1,4 @@
-obj-m += test_warn1.o
+obj-m += oops_mod.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
