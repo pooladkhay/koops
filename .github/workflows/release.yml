@@ -42,18 +42,13 @@ jobs:
             ./koops
           outPath: koops-x86_64-linux.tar.gz
 
-      - name: tree
-        run: |
-          tree
-          ls
-          ls ./target/x86_64-unknown-linux-musl/release/
-
+      # to be updated to https://github.com/softprops/action-gh-release
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ${{ env.BUILD_DIR }}
+          asset_path: ./koops-x86_64-linux.tar.gz
           asset_name: koops-x86_64-linux.tar.gz
           asset_content_type: application/gzip
