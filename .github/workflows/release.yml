@@ -42,6 +42,12 @@ jobs:
             ./koops
           outPath: koops-x86_64-linux.tar.gz
 
+      - name: tree
+        run: |
+          tree
+          ls
+          ls ./target/x86_64-unknown-linux-musl/release/
+
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
