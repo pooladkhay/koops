@@ -16,6 +16,7 @@ To simulate an oops, build and install the kernel module located in `oops_mod` d
 1. Run with info log-level: `sudo ./target/x86_64-unknown-linux-musl/release/koops`
 
 ### Simulate an oops
+Make sure *secure boot* is not enabled
 ```bash
 cd oops_mod
 make
